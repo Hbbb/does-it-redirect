@@ -1,16 +1,17 @@
 const path = require('path');
 
-const SRC = path.join(__dirname, 'src');
-const NODE_MODULES = path.join(__dirname, 'node_modules/');
+const SRC = path.resolve('./src');
+const NODE_MODULES = path.resolve('./node_modules/');
 
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/index.jsx',
   output: {
     path: './client',
     filename: 'bundle.js'
   },
   resolve: {
+    extensions: ['', '.js', '.jsx'],
     root: [SRC, NODE_MODULES]
   },
   module: {
