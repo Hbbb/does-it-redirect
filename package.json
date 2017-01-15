@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "express": "^4.14.0",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "superagent": "^3.3.2"
   }
 }

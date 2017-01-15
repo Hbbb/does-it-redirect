@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 const SRC = path.resolve('./src');
 const NODE_MODULES = path.resolve('./node_modules/');
@@ -14,6 +15,9 @@ module.exports = {
     extensions: ['', '.js', '.jsx'],
     root: [SRC, NODE_MODULES]
   },
+  plugins: [
+    new webpack.DefinePlugin({ "global.GENTLY": false })
+  ],
   module: {
     loaders: [
       {
@@ -26,5 +30,8 @@ module.exports = {
         }
       }
     ]
+  },
+  node: {
+    __dirname: true,
   }
 };
