@@ -1,55 +1,46 @@
-const http = require('http');
-const https = require('https');
-const url = require('url');
-
-// Request comes in with URL
-// Fire
-
+const express = require('express');
+const request = require('request');
 const PORT = 3000;
 
-const requestHandler = (request, response) => {
-  let query = url.parse(request.url).query;
+const app = express();
 
-  if (!query) {
-    response.writeHead(422, {'Content-Type': 'application/json'});
-    return response.end('No url parameter specified. Pass ?url= parameter', 422);
+app.use(ensureUrl);
+app.use(determineIfUrlRedirects);
+
+app.get('/', function(req, res) {
+  res.json(req.redirectTest);
+});
+
+app.listen(PORT, function () {
+  console.log(`Server up and running on port ${PORT}`);
+});
+
+function ensureUrl(req, res, next) {
+  if (!req.query.url) {
+    res.writeHead(422);
+    return res.end(JSON.stringify({error: 'Must supply url parameter'}));
   }
 
-  let testUrl = query.match(/url=(.*)/)[1];
-  determineRedirect(testUrl, response);
+  next();
 };
 
-const determineRedirect = (testUrl, response) => {
-  let request = /^https/.test(testUrl) ? https : http;
+function determineIfUrlRedirects(req, res, next) {
+  const url = req.query.url;
+  const responseData = {};
+  const requestParams = {
+    url: url,
+    followRedirect: false
+  };
 
-  request.get(testUrl, (res) => {
-    let responseText = '';
+  request(requestParams, function(err, response, body) {
+    if (err) {
+      return res.json({error: err.message});
+    }
 
-    res.on('data', (bit) => {
-      responseText += bit;
-    });
+    req.redirectTest = {};
+    req.redirectTest.result = response.statusCode >= 300 && response.statusCode < 400;
+    req.redirectTest.location = response.headers.location || null;
 
-    res.on('end', () => {
-      let performsRedirect = res.statusCode >= 300 && res.statusCode < 400;
-      let data = {redirects: performsRedirect};
-
-      if (performsRedirect) {
-        data.destination = res.headers.location;
-      }
-
-      let serverResponse = JSON.stringify(data);
-
-      response.writeHead(200, {'Content-Type': 'application/json'});
-      response.end(serverResponse);
-    });
+    next();
   });
-}
-
-const server = http.createServer(requestHandler);
-server.listen(PORT, (err) => {
-  if (err) {
-    console.log('Error starting up server', err);
-  }
-
-  console.log(`Server listening on port ${PORT}`);
-});
+};
