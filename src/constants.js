@@ -1,5 +1,9 @@
-const config = {
+const CONFIG = {
   API_URL: 'http://localhost:3000'
-}
+};
 
-export {config}
+const STRINGS = {
+  TITLE: 'Does it Redirect?'
+};
+
+module.exports =  {CONFIG, STRINGS};

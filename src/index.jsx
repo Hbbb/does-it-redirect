@@ -6,52 +6,59 @@ import Button from 'components/Button';
 import ResultsContainer from 'components/ResultsContainer';
 import ApiService from './ApiService';
 
-const intialState = {
-  url: '',
-  result: null,
-  redirectLocation: null,
-  error: null
-};
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.dispatchUpdate = this.dispatchUpdate.bind(this);
     this.submitForm = this.submitForm.bind(this);
+
+    this.state = {
+      url: '',
+      result: null,
+      redirectLocation: null,
+      error: null
+    };
   }
 
   dispatchUpdate(newState) {
     this.setState( Object.assign({}, this.state, newState) );
+
+    // console.log('Old State: ', this.state);
+    // console.log('New State: ', Object.assign({}, this.state, newState));
   }
 
   submitForm() {
     ApiService.determineRedirect(this.state.url, (err, res) => {
       if (err) {
         this.dispatchUpdate({
+          result: null,
+          redirectLocation: null,
           error: err.message
         });
-      } else {
-        this.dispatchUpdate({
-          result: res.result,
-          redirectLocation: res.location
-        });
       }
+
+      this.dispatchUpdate({
+        result: res.body.result,
+        redirectLocation: res.body.location,
+        error: res.body.error
+      });
     });
   }
 
   render() {
     return (
-      <div> Does it Redirect?
+      <div>
         <TextInput
           dispatchUpdate={this.dispatchUpdate}
           value={this.state.url}
         />
-        <Button 
+        <Button
           handleClick={this.submitForm}
         />
-        <ResultsContainer 
+        <ResultsContainer
           result={this.state.result}
           redirectLocation={this.state.redirectLocation}
+          error={this.state.error}
         />
       </div>
     );
