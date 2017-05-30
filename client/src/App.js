@@ -4,6 +4,9 @@ import Component from 'inferno-component';
 import TextInput from 'components/TextInput';
 import Button from 'components/Button';
 import ResultsContainer from 'components/ResultsContainer';
+import ErrorMarker from 'components/ErrorMarker';
+
+
 import ApiService from './ApiService';
 
 class App extends Component {
@@ -28,6 +31,10 @@ class App extends Component {
   }
 
   submitForm() {
+    if (!this.state.url) {
+      return;
+    }
+
     ApiService.determineRedirect(this.state.url, (err, res) => {
       if (err) {
         this.dispatchUpdate({
@@ -47,19 +54,23 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <TextInput
-          dispatchUpdate={this.dispatchUpdate}
-          value={this.state.url}
-        />
-        <Button
-          handleClick={this.submitForm}
-        />
+      <div className="app">
+        <div className="form">
+          <TextInput
+            dispatchUpdate={this.dispatchUpdate}
+            value={this.state.url}
+            label="URL"
+            helpText="full URL including protocol, e.g. https://google.com"
+          />
+          <Button
+            handleClick={this.submitForm}
+          />
+        </div>
         <ResultsContainer
           result={this.state.result}
           redirectLocation={this.state.redirectLocation}
-          error={this.state.error}
         />
+        <ErrorMarker error={this.state.error}/>
       </div>
     );
   }

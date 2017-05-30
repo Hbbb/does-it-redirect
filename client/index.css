@@ -1,4 +1,42 @@
 html, body {
   background-color: #3081B8;
   color: white;
+  width: 460px;
+  height: 400px;
+  margin: 0;
+  font-size: 16px;
+  font-family: helvetica;
+}
+
+input {
+  width: 250px;
+  height: 20px;
+}
+
+button {
+  height: 26px;
+  border-radius: 0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+}
+
+.results-container {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.result-card p {
+  display: inline;
+}
+
+.form {
+  margin-bottom: 50px;
+}
+
+.form-control label {
+  display: block;
 }
